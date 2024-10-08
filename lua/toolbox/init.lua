@@ -17,7 +17,7 @@ end
 
 function M.show_picker()
 	vim.ui.select(M.commandKeyList, {
-		prompt = "Select a command",
+		prompt = "Toolbox",
 	}, function(choice)
 		if choice == nil then
 			return
