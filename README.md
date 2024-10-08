@@ -11,23 +11,25 @@ return {
   'DanWlker/toolbox.nvim',
   config = function()
     require('toolbox').setup {
-        commands = {
-          --replace the bottom two with your own custom functions
-          {
-            name = 'Format Json',
-            execute = "%!jq '.'",
-          },
-          {
-            name = 'Format Json (Function version)',
-            execute = function()
-              vim.cmd "%!jq '.'"
-            end,
-          },
+      commands = {
+        --replace the bottom two with your own custom functions
+        {
+          name = 'Format Json',
+          execute = "%!jq '.'",
         },
-      }
+        {
+          name = 'Format Json (Function version)',
+          execute = function()
+            vim.cmd "%!jq '.'"
+          end,
+        },
+      },
+    }
 
-  end
+    vim.keymap.set({ 'n', 'v' }, '<leader>ch', require('toolbox').show_picker, { desc = '[C]ode [H]elpers' })
+  end,
 }
+
 ```
 
 ## Config
