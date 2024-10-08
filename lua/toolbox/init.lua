@@ -28,10 +28,16 @@ function M.show_picker()
 			return
 		end
 		if type(execute) == "function" then
-			execute()
+			local ok, res = pcall(execute)
+			if not ok then
+				error(res, 0)
+			end
 		end
 		if type(execute) == "string" then
-			vim.cmd(execute)
+			local ok, res = pcall(vim.cmd, execute)
+			if not ok then
+				error(res, 0)
+			end
 		end
 	end)
 end
