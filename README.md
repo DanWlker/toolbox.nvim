@@ -18,6 +18,7 @@ return {
         {
           name = 'Format Json',
           execute = "%!jq '.'",
+          require_input = true,
         },
         {
           name = 'Format Json (Function version)',
@@ -39,12 +40,17 @@ return {
 ```lua
 {
   commands = {
+    --Note this is the identifier for the command as well
     --@type string
     name = ""
-    --if it is a function, it will be immediately invoked
-    --if it is a string, it will be invoked via vim.cmd, similar to :
+    --if it is a function and it requires no params, it will be immediately invoked
+    --if it requires params, it will be shown in the command line
+    --if it is a string, it will be invoked via vim.cmd, similar to `:`
     --@type string|function
-    execute = ""
+    execute = "" | function() end
+    --if set for string commands, it will populate the `:` command
+    --@type bool
+    require_input = false,
   }
 }
 ```
