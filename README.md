@@ -2,6 +2,8 @@
 
 A toolbox for neovim to put your custom neovim functions, all invokable from vim.ui.select! 
 
+![demo](https://github.com/DanWlker/toolbox.nvim/blob/main/demo.gif)
+
 ## Installation
 
 ### Lazy.nvim
