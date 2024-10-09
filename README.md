@@ -29,7 +29,7 @@ return {
       },
     }
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>ch', require('toolbox').show_picker, { desc = '[C]ode [H]elpers' })
+    vim.keymap.set('n', '<leader>ch', require('toolbox').show_picker, { desc = '[C]ode [H]elpers' })
   end,
 }
 
@@ -54,3 +54,7 @@ return {
   }
 }
 ```
+
+## TODOs
+
+1. Make it work in visual mode
