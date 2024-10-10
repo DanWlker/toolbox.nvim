@@ -30,6 +30,14 @@ function M.run(name, ...)
 end
 
 function M.show_picker()
+	local mode = vim.api.nvim_get_mode()["mode"]
+	local isVisual = mode == "v" or mode == "V" or mode == "\22"
+	local startline = vim.fn.getpos("v")[2]
+	local endline = vim.fn.getpos(".")[2]
+	if startline > endline then
+		startline, endline = endline, startline
+	end
+
 	vim.ui.select(M.commandKeyList, {
 		prompt = "Toolbox",
 	}, function(choice)
@@ -57,14 +65,20 @@ function M.show_picker()
 			if not ok then
 				error(res, 0)
 			end
+			return
 		end
 
 		if type(execute) == "string" then
+			local cmdPrefix = ":"
+			if isVisual then
+				cmdPrefix = cmdPrefix .. startline .. "," .. endline
+			end
+
 			if M.commandMap[choice].require_input then
-				vim.api.nvim_feedkeys(":" .. execute, "m", false)
+				vim.api.nvim_feedkeys(cmdPrefix .. execute, "m", false)
 				return
 			end
-			local ok, res = pcall(vim.cmd, execute)
+			local ok, res = pcall(vim.cmd, cmdPrefix .. execute)
 			if not ok then
 				error(res, 0)
 			end

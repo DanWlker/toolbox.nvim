@@ -29,10 +29,9 @@ return {
       },
     }
 
-    vim.keymap.set('n', '<leader>st', require('toolbox').show_picker, { desc = '[S]earch [T]oolbox' })
+    vim.keymap.set({ 'n', 'v' }, '<leader>st', require('toolbox').show_picker, { desc = '[S]earch [T]oolbox' })
   end,
 }
-
 ```
 
 ## Config
@@ -57,4 +56,4 @@ return {
 
 ## TODOs
 
-1. Make it work in visual mode
+1. Make it work in visual mode (Done)
