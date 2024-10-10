@@ -49,7 +49,7 @@ function M.show_picker()
 						.. choice
 						.. vim.api.nvim_replace_termcodes('", )<Left>', true, false, true),
 					"m",
-					true
+					false
 				)
 				return
 			end
@@ -61,7 +61,7 @@ function M.show_picker()
 
 		if type(execute) == "string" then
 			if M.commandMap[choice].require_input then
-				vim.api.nvim_feedkeys(":" .. execute, "m", true)
+				vim.api.nvim_feedkeys(":" .. execute, "m", false)
 				return
 			end
 			local ok, res = pcall(vim.cmd, execute)
