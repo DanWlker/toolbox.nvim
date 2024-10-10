@@ -45,12 +45,9 @@ function M.show_picker()
 		if type(execute) == "function" then
 			if debug.getinfo(execute).nparams > 0 then
 				vim.api.nvim_feedkeys(
-					vim.api.nvim_replace_termcodes(
-						":lua require('toolbox').run(\"" .. choice .. '", )<Left>',
-						true,
-						false,
-						true
-					),
+					vim.api.nvim_replace_termcodes(":lua require('toolbox').run(\"", true, false, true)
+						.. choice
+						.. vim.api.nvim_replace_termcodes('", )<Left>', true, false, true),
 					"m",
 					true
 				)
