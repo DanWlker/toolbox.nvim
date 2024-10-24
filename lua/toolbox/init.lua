@@ -21,15 +21,19 @@ function M.setup(opts)
 	end)
 end
 
-function M.run(name, ...)
+function M.run(name)
 	local execute = M.commandMap[name].execute
 	if execute == nil or type(execute) ~= "function" then
 		error("Unknown or unexecutable command", 0)
 	end
-	local ok, res = pcall(execute, ...)
-	if not ok then
-		error(res, 0)
-	end
+	return {
+		withArgs = function(...)
+			local ok, res = pcall(execute, ...)
+			if not ok then
+				error(res, 0)
+			end
+		end,
+	}
 end
 
 function M.show_picker()
@@ -54,11 +58,23 @@ function M.show_picker()
 		end
 
 		if type(execute) == "function" then
-			if debug.getinfo(execute).nparams > 0 then
+			local numParams = debug.getinfo(execute).nparams
+			if numParams > 0 then
+				local hintText = " -- " .. numParams
+				if numParams > 1 then
+					hintText = hintText .. " args required"
+				else
+					hintText = hintText .. " arg required"
+				end
 				vim.api.nvim_feedkeys(
 					vim.api.nvim_replace_termcodes(":lua require('toolbox').run(\"", true, false, true)
 						.. choice
-						.. vim.api.nvim_replace_termcodes('", )<Left>', true, false, true),
+						.. vim.api.nvim_replace_termcodes(
+							'").withArgs()' .. hintText .. string.rep("<Left>", string.len(hintText) + 1),
+							true,
+							false,
+							true
+						),
 					"m",
 					false
 				)
