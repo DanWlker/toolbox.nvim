@@ -16,6 +16,9 @@ function M.setup(opts)
 	for k, _ in pairs(M.commandMap) do
 		table.insert(M.commandKeyList, k)
 	end
+	table.sort(M.commandKeyList, function(a, b)
+		return string.upper(a) < string.upper(b)
+	end)
 end
 
 function M.run(name, ...)

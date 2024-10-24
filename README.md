@@ -11,43 +11,71 @@ A toolbox for neovim to put your custom neovim functions, all invokable from vim
 ```lua
 return {
   'DanWlker/toolbox.nvim',
-  config = function()
-    require('toolbox').setup {
-      commands = {
-        --replace the bottom few with your own custom functions
-        {
-          name = 'Format Json',
-          execute = "%!jq '.'",
-          require_input = true,
-        },
-        {
-          name = 'Try in visual mode!', --this works in visual mode as well!
-          execute = 's/leader/thing',
-        },
-        {
-          name = 'Inspect Vim Table',
-          execute = function(v)
-            print(vim.inspect(v))
-          end,
-        },
-        {
-          name = 'Copy Vim Table To Clipboard',
-          execute = function(v)
-            vim.fn.setreg('+', vim.inspect(v))
-          end,
-        },
-        {
-          name = 'Reload plugin',
-          execute = function(name)
-            package.loaded[name] = nil
-            require(name).setup()
-          end,
-        },
+  keys = {
+    {
+      '<leader>st',
+      function()
+        require('toolbox').show_picker()
+      end,
+      desc = '[S]earch [T]oolbox',
+      mode = { 'n', 'v' },
+    },
+  },
+  -- Remove this if you don't need to always see telescope's ui when triggering toolbox
+  -- keys = {} will cause toolbox to lazy load, therefore if it loads before telescope you
+  -- will see the default vim.ui.select.
+  --
+  -- If you want to use your custom vim.ui.select overrides, remember to add it into dependencies
+  -- to ensure it loads first
+  --
+  -- Note: This is safe to remove, it is just to ensure plugins load in the correct order
+  dependencies = { 'nvim-telescope/telescope.nvim' },
+  opts = {
+    commands = {
+      {
+        name = 'Close current tab',
+        execute = 'tabclose',
       },
-    }
-
-    vim.keymap.set({ 'n', 'v' }, '<leader>st', require('toolbox').show_picker, { desc = '[S]earch [T]oolbox' })
-  end,
+      {
+        name = 'Format Json',
+        execute = "%!jq '.'",
+      },
+      {
+        name = 'Print Vim table',
+        execute = function(v)
+          print(vim.inspect(v))
+        end,
+      },
+      {
+        name = 'Copy relative path to clipboard',
+        execute = function()
+          local path = vim.fn.expand '%'
+          vim.fn.setreg('+', path)
+        end,
+      },
+      {
+        name = 'Copy absolute path to clipboard',
+        execute = function()
+          local path = vim.fn.expand '%:p'
+          vim.fn.setreg('+', path)
+        end,
+      },
+      {
+        name = 'Copy Vim table to clipboard',
+        execute = function(v)
+          vim.fn.setreg('+', vim.inspect(v))
+        end,
+      },
+      {
+        name = 'Reload plugin',
+        execute = function(name)
+          package.loaded[name] = nil
+          require(name).setup()
+        end,
+      },
+    },
+  },
+  config = true,
 }
 ```
 
