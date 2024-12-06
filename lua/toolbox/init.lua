@@ -1,21 +1,31 @@
 local M = {}
 
+local function get_weight(item, opts)
+	if item.weight == nil then
+		return opts.weight(item.name, item.execute)
+	elseif type(item.weight) == "function" then
+		return item.weight(item.name, item.execute)
+	else
+		return item.weight
+	end
+end
+
 function M.setup(opts)
-	opts = opts or {}
-	local commands = opts.commands or {}
+	opts = vim.tbl_extend("force", {
+		weight = function(name, execute)
+			return name:upper()
+		end,
+		commands = {},
+	}, opts or {})
+
 	table.sort(opts.commands, function(a, b)
-		if a.weight ~= nil or b.weight ~= nil then
-			-- Higher weight should be shown first
-			-- hence descending sort
-			return (a.weight or 0) > (b.weight or 0)
-		end
-		return string.upper(a.name) < string.upper(b.name)
+		return get_weight(a, opts) < get_weight(b, opts)
 	end)
 
 	M.commandMap = {}
 	M.tagToCommandList = {}
 	M.tagToCommandList[""] = {}
-	for _, command in ipairs(commands) do
+	for _, command in ipairs(opts.commands) do
 		M.commandMap[command.name] = {
 			execute = command.execute,
 			require_input = command.require_input or false,

@@ -40,6 +40,9 @@ return {
       {
         name = 'Format Json',
         execute = "%!jq '.'",
+        weight = function(name, execute)
+          return #name -- sort by the length of the name
+        end,
       },
       {
         name = 'Print Vim table',
@@ -77,6 +80,9 @@ return {
         tags = { 'first', 'second' },
       },
     },
+    weight = function(name, execute)
+        return name:upper()
+    end
   },
   config = true,
 }
