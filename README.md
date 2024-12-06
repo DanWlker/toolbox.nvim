@@ -35,6 +35,7 @@ return {
       {
         name = 'Close current tab',
         execute = 'tabclose',
+        weight = 2,
       },
       {
         name = 'Format Json',
@@ -97,12 +98,17 @@ return {
     --if set for string commands, it will populate the `:` command
     --@type bool
     require_input = false,
-    -- When calling require('toolbox').show_picker(), you can pass it a tag
-    -- Ex. require('toolbox').show_picker('first')
-    -- Commands with the tag will be shown, if no tags are given when calling
-    -- the function, it will show all commands available
+    --When calling require('toolbox').show_picker(), you can pass it a tag
+    --Ex. require('toolbox').show_picker('first')
+    --Commands with the tag will be shown, if no tags are given when calling
+    --the function, it will show all commands available
     --@type list 
-    tags = {}
+    tags = {},
+    -- Higher weights will be placed higher in the list
+    -- Lower weights will be placed lower, you can use negative
+    -- numbers as well to put it at the end of the list
+    --@type number
+    weight = 0,
   }
 }
 ```

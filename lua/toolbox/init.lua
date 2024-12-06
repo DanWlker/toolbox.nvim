@@ -4,6 +4,11 @@ function M.setup(opts)
 	opts = opts or {}
 	local commands = opts.commands or {}
 	table.sort(opts.commands, function(a, b)
+		if a.weight ~= nil or b.weight ~= nil then
+			-- Higher weight should be shown first
+			-- hence descending sort
+			return (a.weight or 0) > (b.weight or 0)
+		end
 		return string.upper(a.name) < string.upper(b.name)
 	end)
 
