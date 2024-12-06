@@ -65,6 +65,7 @@ return {
         execute = function(v)
           vim.fn.setreg('+', vim.inspect(v))
         end,
+        tags = { 'first' },
       },
       {
         name = 'Reload plugin',
@@ -72,6 +73,7 @@ return {
           package.loaded[name] = nil
           require(name).setup()
         end,
+        tags = { 'first', 'second' },
       },
     },
   },
@@ -95,6 +97,12 @@ return {
     --if set for string commands, it will populate the `:` command
     --@type bool
     require_input = false,
+    -- When calling require('toolbox').show_picker(), you can pass it a tag
+    -- Ex. require('toolbox').show_picker('first')
+    -- Commands with the tag will be shown, if no tags are given when calling
+    -- the function, it will show all commands available
+    --@type list 
+    tags = {}
   }
 }
 ```

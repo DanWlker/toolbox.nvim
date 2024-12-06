@@ -3,22 +3,26 @@ local M = {}
 function M.setup(opts)
 	opts = opts or {}
 	local commands = opts.commands or {}
+	table.sort(opts.commands, function(a, b)
+		return string.upper(a.name) < string.upper(b.name)
+	end)
 
 	M.commandMap = {}
-	for _, val in ipairs(commands) do
-		M.commandMap[val.name] = {
-			execute = val.execute,
-			require_input = val.require_input or false,
+	M.tagToCommandList = {}
+	M.tagToCommandList[""] = {}
+	for _, command in ipairs(commands) do
+		M.commandMap[command.name] = {
+			execute = command.execute,
+			require_input = command.require_input or false,
 		}
+		table.insert(M.tagToCommandList[""], command.name)
+		for _, tag in ipairs(command.tags or {}) do
+			if M.tagToCommandList[tag] == nil then
+				M.tagToCommandList[tag] = {}
+			end
+			table.insert(M.tagToCommandList[tag], command.name)
+		end
 	end
-
-	M.commandKeyList = {}
-	for k, _ in pairs(M.commandMap) do
-		table.insert(M.commandKeyList, k)
-	end
-	table.sort(M.commandKeyList, function(a, b)
-		return string.upper(a) < string.upper(b)
-	end)
 end
 
 function M.run(name)
@@ -36,7 +40,7 @@ function M.run(name)
 	}
 end
 
-function M.show_picker()
+function M.show_picker(tag)
 	local mode = vim.api.nvim_get_mode()["mode"]
 	local isVisual = mode == "v" or mode == "V" or mode == "\22"
 	local startpos = vim.fn.getpos("v")
@@ -44,7 +48,15 @@ function M.show_picker()
 	vim.api.nvim_buf_set_mark(startpos[1], "<", startpos[2], startpos[3], {})
 	vim.api.nvim_buf_set_mark(endpos[1], ">", endpos[2], endpos[3], {})
 
-	vim.ui.select(M.commandKeyList, {
+	if tag == nil then
+		tag = ""
+	end
+	if M.tagToCommandList[tag] == nil then
+		error("Commands with the tag '" .. tag .. "' do not exist")
+		return
+	end
+
+	vim.ui.select(M.tagToCommandList[tag], {
 		prompt = "Toolbox",
 	}, function(choice)
 		if choice == nil then
