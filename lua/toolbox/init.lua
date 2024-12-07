@@ -61,8 +61,13 @@ function M.show_picker(tag)
 		return
 	end
 
+	local promptTitle = "Toolbox"
+	if tag ~= "" then
+		promptTitle = promptTitle .. " <" .. tag .. ">"
+	end
+
 	vim.ui.select(M.tagToCommandList[tag], {
-		prompt = "Toolbox",
+		prompt = promptTitle,
 	}, function(choice)
 		if choice == nil then
 			return
