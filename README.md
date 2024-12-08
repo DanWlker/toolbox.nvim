@@ -66,7 +66,6 @@ return {
         execute = function(v)
           vim.fn.setreg('+', vim.inspect(v))
         end,
-        tags = { 'first' },
       },
       {
         name = 'Reload plugin',
@@ -74,7 +73,6 @@ return {
           package.loaded[name] = nil
           require(name).setup()
         end,
-        tags = { 'first', 'second' },
       },
     },
   },
@@ -98,12 +96,6 @@ return {
     --if set for string commands, it will populate the `:` command
     --@type bool
     require_input = false,
-    --When calling require('toolbox').show_picker(), you can pass it a tag
-    --Ex. require('toolbox').show_picker('first')
-    --Commands with the tag will be shown, if no tags are given when calling
-    --the function, it will show all commands available
-    --@type list 
-    tags = {},
     -- Higher weights will be placed higher in the list
     -- Lower weights will be placed lower, you can use negative
     -- numbers as well to put it at the end of the list
@@ -112,6 +104,73 @@ return {
   }
 }
 ```
+
+## Recipes
+
+<details><summary>Filter commands by tag</summary>
+
+### Configuration
+
+```lua
+opts = {
+  commands = {
+    { name = "Copy full path", execute = ":let @+ = expand('%:p')", tags = { "clipboard" } },
+    { name = "Copy filename", execute = ":let @+ = expand('%:t')", tags = { "clipboard" } },
+    { name = "Remove empty lines", execute = ":g/^$/d", tags = { "editor", "newline" } },
+  },
+}
+```
+
+### Usage
+
+```lua
+-- Show only clipboard commands
+local function filter(command)
+  return command.tags ~= nil and vim.tbl_contains(command.tags, "clipboard")
+end
+require("toolbox").show_picker(filter, { prompt = "Select clipboard command" })
+```
+
+</details>
+
+<details><summary>Filter commands by current filetype</summary>
+
+### Configuration
+
+```lua
+opts = {
+  commands = {
+    { name = "Copy full path", execute = ":let @+ = expand('%:p')" },
+    { name = "Format JSON with jq", execute = ":%!jq", filetype = "json" }
+    { name = "Format QML file", execute = ":qmlformat %", filetype = "qml" }
+  },
+}
+```
+
+### Usage
+
+```lua
+require("toolbox").show_picker(function(command)
+  return command.filetype == vim.bo.filetype
+end, { prompt = "Select " .. vim.bo.filetype .. " command" })
+```
+
+</details>
+
+<details><summary>Change command representation in the list</summary>
+
+### Usage
+
+```lua
+require("toolbox").show_picker(nil, {
+  format_item = function(command)
+    -- Display => and execute string after the name
+    return command.name .. " => " .. (type(command.execute) == "function" and "<function>" or command.execute)
+  end
+})
+```
+
+</details>
 
 ## TODOs
 
