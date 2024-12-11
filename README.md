@@ -66,6 +66,7 @@ return {
         execute = function(v)
           vim.fn.setreg('+', vim.inspect(v))
         end,
+        tags = { 'first' },
       },
       {
         name = 'Reload plugin',
@@ -73,6 +74,7 @@ return {
           package.loaded[name] = nil
           require(name).setup()
         end,
+        tags = { 'first', 'second' },
       },
     },
   },
