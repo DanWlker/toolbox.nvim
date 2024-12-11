@@ -31,9 +31,9 @@ local function find_command(name)
 	return nil
 end
 
---- @param opts Toolbox.Config
+---@param opts Toolbox.Config
 function M.setup(opts)
-	--- @type Toolbox.Config
+	---@type Toolbox.Config
 	opts = vim.tbl_extend("force", {
 		commands = {},
 	}, opts or {})
@@ -50,7 +50,7 @@ function M.setup(opts)
 	options = opts
 end
 
---- @param name string
+---@param name string
 function M.run(name)
 	local command = find_command(name)
 	if command == nil then
@@ -72,8 +72,8 @@ function M.run(name)
 	}
 end
 
---- @param tag string|nil
---- @param select_opts table Taken from vim.ui.select
+---@param tag string|nil
+---@param select_opts table Taken from vim.ui.select
 ---     - prompt (string|nil)
 ---               Text of the prompt. Defaults to `Select one of:`
 ---     - format_item (function item -> text)
@@ -98,7 +98,7 @@ function M.show_picker(tag, select_opts)
 end
 
 ---@param opts Toolbox.ShowPickerCustomOpts?
---- @param select_opts table Taken from vim.ui.select
+---@param select_opts table Taken from vim.ui.select
 ---     - prompt (string|nil)
 ---               Text of the prompt. Defaults to `Select one of:`
 ---     - format_item (function item -> text)
