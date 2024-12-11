@@ -151,7 +151,7 @@ opts = {
 #### Usage
 
 ```lua
-require("toolbox").show_picker({
+require("toolbox").show_picker_custom({
   filter = function(command)
     return command.filetype == vim.bo.filetype
   end

@@ -63,7 +63,7 @@ function M.run(name)
 	end
 
 	return {
-		withArgs = function(...)
+		with_args = function(...)
 			local ok, res = pcall(execute, ...)
 			if not ok then
 				error(res, 0)
@@ -113,7 +113,7 @@ function M.show_picker_custom(opts, select_opts)
 	opts = opts or {}
 
 	local mode = vim.api.nvim_get_mode()["mode"]
-	local isVisual = mode == "v" or mode == "V" or mode == "\22"
+	local is_visual = mode == "v" or mode == "V" or mode == "\22"
 	local startpos = vim.fn.getpos("v")
 	local endpos = vim.fn.getpos(".")
 	vim.api.nvim_buf_set_mark(startpos[1], "<", startpos[2], startpos[3], {})
@@ -137,19 +137,19 @@ function M.show_picker_custom(opts, select_opts)
 
 			local execute = command.execute
 			if type(execute) == "function" then
-				local numParams = debug.getinfo(execute).nparams
-				if numParams > 0 then
-					local hintText = " -- " .. numParams
-					if numParams > 1 then
-						hintText = hintText .. " args required"
+				local num_params = debug.getinfo(execute).nparams
+				if num_params > 0 then
+					local hint_text = " -- " .. num_params
+					if num_params > 1 then
+						hint_text = hint_text .. " args required"
 					else
-						hintText = hintText .. " arg required"
+						hint_text = hint_text .. " arg required"
 					end
 					vim.api.nvim_feedkeys(
 						vim.api.nvim_replace_termcodes(":lua require('toolbox').run(\"", true, false, true)
 							.. command.name
 							.. vim.api.nvim_replace_termcodes(
-								'").withArgs()' .. hintText .. string.rep("<Left>", string.len(hintText) + 1),
+								'").with_args()' .. hint_text .. string.rep("<Left>", string.len(hint_text) + 1),
 								true,
 								false,
 								true
@@ -164,16 +164,16 @@ function M.show_picker_custom(opts, select_opts)
 					error(res, 0)
 				end
 			elseif type(execute) == "string" then
-				local cmdPrefix = ":"
-				if isVisual then
-					cmdPrefix = cmdPrefix .. "'<,'>"
+				local cmd_prefix = ":"
+				if is_visual then
+					cmd_prefix = cmd_prefix .. "'<,'>"
 				end
 
 				if command.require_input then
-					vim.api.nvim_feedkeys(cmdPrefix .. execute, "m", false)
+					vim.api.nvim_feedkeys(cmd_prefix .. execute, "m", false)
 					return
 				end
-				local ok, res = pcall(vim.cmd, cmdPrefix .. execute)
+				local ok, res = pcall(vim.cmd, cmd_prefix .. execute)
 				if not ok then
 					error(res, 0)
 				end
