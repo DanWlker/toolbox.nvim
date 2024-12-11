@@ -149,9 +149,11 @@ opts = {
 #### Usage
 
 ```lua
-require("toolbox").show_picker(function(command)
-  return command.filetype == vim.bo.filetype
-end, { prompt = "Select " .. vim.bo.filetype .. " command" })
+require("toolbox").show_picker({
+  filter = function(command)
+    return command.filetype == vim.bo.filetype
+  end
+}, { prompt = "Select " .. vim.bo.filetype .. " command" })
 ```
 
 </details>
