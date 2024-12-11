@@ -96,6 +96,12 @@ return {
     --if set for string commands, it will populate the `:` command
     --@type bool
     require_input = false,
+    --When calling require('toolbox').show_picker(), you can pass it a tag
+    --Ex. require('toolbox').show_picker('first')
+    --Commands with the tag will be shown, if no tags are given when calling
+    --the function, it will show all commands available
+    --@type list 
+    tags = {},
     -- Higher weights will be placed higher in the list
     -- Lower weights will be placed lower, you can use negative
     -- numbers as well to put it at the end of the list
@@ -105,37 +111,30 @@ return {
 }
 ```
 
-## Recipes
+## Usage
 
-<details><summary>Filter commands by tag</summary>
+Call `require('toolbox').show_picker()`, it accepts two optional arguments:
 
-### Configuration
+- tag
 
-```lua
-opts = {
-  commands = {
-    { name = "Copy full path", execute = ":let @+ = expand('%:p')", tags = { "clipboard" } },
-    { name = "Copy filename", execute = ":let @+ = expand('%:t')", tags = { "clipboard" } },
-    { name = "Remove empty lines", execute = ":g/^$/d", tags = { "editor", "newline" } },
-  },
-}
-```
+  - Toolbox will filter your commands by specified tags in each command
 
-### Usage
+- select_opts
 
-```lua
--- Show only clipboard commands
-local function filter(command)
-  return command.tags ~= nil and vim.tbl_contains(command.tags, "clipboard")
-end
-require("toolbox").show_picker(filter, { prompt = "Select clipboard command" })
-```
+  - This will be passed to vim.ui.select as the `opts` argument, see `:help vim.ui.select`
 
-</details>
+## Advanced
+
+For advanced users, toolbox contains a lower level function call `show_picker_custom`,
+that provides more control towards filtering (and sorting possibly in future).
+`show_picker_custom` does not require you to use tags for filtering, you can filter by
+anything you want. Advanced examples are below
+
+### Examples
 
 <details><summary>Filter commands by current filetype</summary>
 
-### Configuration
+#### Configuration
 
 ```lua
 opts = {
@@ -147,7 +146,7 @@ opts = {
 }
 ```
 
-### Usage
+#### Usage
 
 ```lua
 require("toolbox").show_picker(function(command)
@@ -159,7 +158,7 @@ end, { prompt = "Select " .. vim.bo.filetype .. " command" })
 
 <details><summary>Change command representation in the list</summary>
 
-### Usage
+#### Usage
 
 ```lua
 require("toolbox").show_picker(nil, {
@@ -171,7 +170,3 @@ require("toolbox").show_picker(nil, {
 ```
 
 </details>
-
-## TODOs
-
-1. Make it work in visual mode (Done)
