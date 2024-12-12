@@ -113,6 +113,64 @@ return {
 }
 ```
 
-## TODOs
+## Usage
 
-1. Make it work in visual mode (Done)
+Call `require('toolbox').show_picker()`, it accepts two optional arguments:
+
+- tag
+
+  - Toolbox will filter your commands by specified tags in each command
+
+- select_opts
+
+  - This will be passed to vim.ui.select as the `opts` argument, see `:help vim.ui.select`
+
+## Advanced
+
+For advanced users, toolbox contains a lower level function call `show_picker_custom`,
+that provides more control towards filtering (and sorting possibly in future).
+`show_picker_custom` does not require you to use tags for filtering, you can filter by
+anything you want. Advanced examples are below
+
+### Examples
+
+<details><summary>Filter commands by current filetype</summary>
+
+#### Configuration
+
+```lua
+opts = {
+  commands = {
+    { name = "Copy full path", execute = ":let @+ = expand('%:p')" },
+    { name = "Format JSON with jq", execute = ":%!jq", filetype = "json" }
+    { name = "Format QML file", execute = ":qmlformat %", filetype = "qml" }
+  },
+}
+```
+
+#### Usage
+
+```lua
+require("toolbox").show_picker_custom({
+  filter = function(command)
+    return command.filetype == vim.bo.filetype
+  end
+}, { prompt = "Select " .. vim.bo.filetype .. " command" })
+```
+
+</details>
+
+<details><summary>Change command representation in the list</summary>
+
+#### Usage
+
+```lua
+require("toolbox").show_picker(nil, {
+  format_item = function(command)
+    -- Display => and execute string after the name
+    return command.name .. " => " .. (type(command.execute) == "function" and "<function>" or command.execute)
+  end
+})
+```
+
+</details>
