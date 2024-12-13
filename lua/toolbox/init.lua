@@ -86,6 +86,8 @@ end
 ---               `items`, or the context in which select() was called.
 function M.show_picker(tag, select_opts)
 	if tag == nil or tag == "" then
+		-- minor optimization, commands are sorted using the default way when initing
+		-- so we don't have to sort every time we open if not necessary
 		M.show_picker_custom(nil, select_opts)
 		return
 	end
@@ -126,8 +128,13 @@ function M.show_picker_custom(opts, select_opts)
 		end,
 	}, select_opts or {})
 
+	local items = filter_commands(opts.filter)
+	if opts.sorter ~= nil then
+		table.sort(items, opts.sorter)
+	end
+
 	vim.ui.select(
-		filter_commands(opts.filter),
+		items,
 		select_opts,
 		---@param command Toolbox.Command
 		function(command)

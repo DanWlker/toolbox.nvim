@@ -9,4 +9,5 @@
 ---@field weight number?
 
 ---@class Toolbox.ShowPickerCustomOpts
----@field filter fun(command: Toolbox.Command): boolean
+---@field filter (fun(command: Toolbox.Command): boolean)?
+---@field sorter (fun(a:Toolbox.Command, b:Toolbox.Command): boolean)?
