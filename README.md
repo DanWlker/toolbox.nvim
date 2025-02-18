@@ -124,6 +124,7 @@ Call `require('toolbox').show_picker()`, it accepts two optional arguments:
 - select_opts
 
   - This will be passed to vim.ui.select as the `opts` argument, see `:help vim.ui.select`
+  - If you are using a custom `vim.ui.select` implementation, you can add arguments here to achieve additional functionality, toolbox passes select_opts directly to `vim.ui.select`, so any `vim.ui.select` overrides that use additional arguments will receive them as well
 
 ## Advanced
 
