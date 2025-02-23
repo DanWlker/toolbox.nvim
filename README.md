@@ -1,6 +1,6 @@
 # toolbox.nvim
 
-A toolbox for neovim to put your custom neovim functions, all invokable from vim.ui.select! 
+A toolbox for neovim to put your custom neovim functions, all invokable from vim.ui.select!
 
 ![demo](https://github.com/DanWlker/toolbox.nvim/blob/main/demo.gif)
 
@@ -102,7 +102,7 @@ return {
     --Ex. require('toolbox').show_picker('first')
     --Commands with the tag will be shown, if no tags are given when calling
     --the function, it will show all commands available
-    --@type list 
+    --@type list
     tags = {},
     -- Higher weights will be placed higher in the list
     -- Lower weights will be placed lower, you can use negative
@@ -128,12 +128,10 @@ Call `require('toolbox').show_picker()`, it accepts two optional arguments:
 
 ## Advanced
 
-For advanced users, toolbox contains a lower level function call `show_picker_custom`,
-that provides more control towards filtering (and sorting possibly in future).
-`show_picker_custom` does not require you to use tags for filtering, you can filter by
-anything you want. Advanced examples are below
-
-### Examples
+1. For advanced users, toolbox contains a lower level function call `show_picker_custom`,
+   that provides more control towards filtering and sorting.
+   `show_picker_custom` does not require you to use tags for filtering, you can filter by
+   anything you want.
 
 <details><summary>Filter commands by current filetype</summary>
 
@@ -161,6 +159,8 @@ require("toolbox").show_picker_custom({
 
 </details>
 
+2. `select_opts` is passed to vim.ui.select directly, so, if you're custom override expects different values, you can pass them here as well
+
 <details><summary>Change command representation in the list</summary>
 
 #### Usage
@@ -171,6 +171,25 @@ require("toolbox").show_picker(nil, {
     -- Display => and execute string after the name
     return command.name .. " => " .. (type(command.execute) == "function" and "<function>" or command.execute)
   end
+})
+```
+
+</details>
+
+3. You can now extend toolbox's existing commands after setup
+
+<details><summary>Add a custom command from somewhere else (ex. after loading a plugin)</summary>
+
+#### Usage
+
+```lua
+vim.list_extend(require('toolbox').opts.commands, {
+  {
+    name = 'This is an extra command to be added in the future',
+    execute = function(item, item2, item3)
+      print('hello toolbox')
+    end,
+  },
 })
 ```
 

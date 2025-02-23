@@ -1,18 +1,20 @@
 local M = {}
 
 ---@type Toolbox.Config
-local options = {}
+M.opts = {
+	commands = {},
+}
 
 ---@param filter fun(command:Toolbox.Command)
 ---@return Toolbox.Command[]
 local function filter_commands(filter)
 	if filter == nil then
-		return options.commands
+		return M.opts.commands
 	end
 
 	---@type Toolbox.Command[]
 	local filtered = {}
-	for _, command in ipairs(options.commands) do
+	for _, command in ipairs(M.opts.commands) do
 		if filter(command) then
 			table.insert(filtered, command)
 		end
@@ -23,7 +25,7 @@ end
 ---@param name string
 ---@return Toolbox.Command|nil
 local function find_command(name)
-	for _, command in ipairs(options.commands) do
+	for _, command in ipairs(M.opts.commands) do
 		if command.name == name then
 			return command
 		end
@@ -34,20 +36,9 @@ end
 ---@param opts Toolbox.Config
 function M.setup(opts)
 	---@type Toolbox.Config
-	opts = vim.tbl_extend("force", {
+	M.opts = vim.tbl_extend("force", {
 		commands = {},
 	}, opts or {})
-
-	table.sort(opts.commands, function(a, b)
-		if a.weight ~= nil or b.weight ~= nil then
-			-- Higher weight should be shown first
-			-- hence descending sort
-			return (a.weight or 0) > (b.weight or 0)
-		end
-		return string.upper(a.name) < string.upper(b.name)
-	end)
-
-	options = opts
 end
 
 ---@param name string
@@ -72,6 +63,15 @@ function M.run(name)
 	}
 end
 
+local default_sorter = function(a, b)
+	if a.weight ~= nil or b.weight ~= nil then
+		-- Higher weight should be shown first
+		-- hence descending sort
+		return (a.weight or 0) > (b.weight or 0)
+	end
+	return string.upper(a.name) < string.upper(b.name)
+end
+
 ---@param tag string|nil
 ---@param select_opts table Taken from vim.ui.select
 ---     - prompt (string|nil)
@@ -85,18 +85,17 @@ end
 ---               use this to infer the structure or semantics of
 ---               `items`, or the context in which select() was called.
 function M.show_picker(tag, select_opts)
-	if tag == nil or tag == "" then
-		-- minor optimization, commands are sorted using the default way when initing
-		-- so we don't have to sort every time we open if not necessary
-		M.show_picker_custom(nil, select_opts)
-		return
+	---@param opts Toolbox.ShowPickerCustomOpts?
+	local opts = {
+		sorter = default_sorter,
+	}
+	if tag ~= nil and tag ~= "" then
+		opts.filter = function(command)
+			return command.tags ~= nil and vim.tbl_contains(command.tags, tag)
+		end
 	end
 
-	M.show_picker_custom({
-		filter = function(command)
-			return command.tags ~= nil and vim.tbl_contains(command.tags, tag)
-		end,
-	}, select_opts)
+	M.show_picker_custom(opts, select_opts)
 end
 
 ---@param opts Toolbox.ShowPickerCustomOpts?
