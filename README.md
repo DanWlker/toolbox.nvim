@@ -159,7 +159,7 @@ require("toolbox").show_picker_custom({
 
 </details>
 
-2. `select_opts` is passed to vim.ui.select directly, so, if you're custom override expects different values, you can pass them here as well
+2. `select_opts` is passed to vim.ui.select directly, so, if your custom override expects different values, you can pass them here as well
 
 <details><summary>Change command representation in the list</summary>
 
