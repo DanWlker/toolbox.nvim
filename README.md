@@ -47,6 +47,15 @@ return {
           print(vim.inspect(v))
         end,
       },
+      -- Note variadic arguments need require_input
+      {
+        name = 'Print Variadic arguments',
+        execute = function(...)
+          local args = {...}
+          print(vim.inspect(args))
+        end,
+        require_input = true,
+      },
       {
         name = 'Copy relative path to clipboard',
         execute = function()
@@ -90,12 +99,14 @@ return {
     --Note this is the identifier for the command as well
     --@type string
     name = ""
-    --if it is a function and it requires no params, it will be immediately invoked
-    --if it requires params, it will be shown in the command line
+    --if function requires no params, it will be immediately invoked
+    --if function requires params, it will be shown in the command line
+    --if function uses variadic arguments, you need to set `require_input` to true
     --if it is a string, it will be invoked via vim.cmd, similar to `:`
     --@type string|function
     execute = "" | function() end
-    --if set for string commands, it will populate the `:` command
+    --Will populate command line if set to true
+    --Functions that use variadic arguments need this to work
     --@type bool
     require_input = false,
     --When calling require('toolbox').show_picker(), you can pass it a tag

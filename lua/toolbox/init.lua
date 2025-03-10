@@ -85,7 +85,7 @@ end
 ---               use this to infer the structure or semantics of
 ---               `items`, or the context in which select() was called.
 function M.show_picker(tag, select_opts)
-	---@param opts Toolbox.ShowPickerCustomOpts?
+	---@type Toolbox.ShowPickerCustomOpts?
 	local opts = {
 		sorter = default_sorter,
 	}
@@ -96,6 +96,26 @@ function M.show_picker(tag, select_opts)
 	end
 
 	M.show_picker_custom(opts, select_opts)
+end
+
+---@param command_name string
+---@param hint_text string|nil
+local function print_to_command_line(command_name, hint_text)
+	if hint_text == nil then
+		hint_text = ""
+	end
+	vim.api.nvim_feedkeys(
+		vim.api.nvim_replace_termcodes(":lua require('toolbox').run(\"", true, false, true)
+			.. command_name
+			.. vim.api.nvim_replace_termcodes(
+				'").with_args()' .. hint_text .. string.rep("<Left>", string.len(hint_text) + 1),
+				true,
+				false,
+				true
+			),
+		"m",
+		false
+	)
 end
 
 ---@param opts Toolbox.ShowPickerCustomOpts?
@@ -151,20 +171,16 @@ function M.show_picker_custom(opts, select_opts)
 					else
 						hint_text = hint_text .. " arg required"
 					end
-					vim.api.nvim_feedkeys(
-						vim.api.nvim_replace_termcodes(":lua require('toolbox').run(\"", true, false, true)
-							.. command.name
-							.. vim.api.nvim_replace_termcodes(
-								'").with_args()' .. hint_text .. string.rep("<Left>", string.len(hint_text) + 1),
-								true,
-								false,
-								true
-							),
-						"m",
-						false
-					)
+					print_to_command_line(command.name, hint_text)
 					return
 				end
+
+				-- debug.getinfo can't detect variadic arguments
+				if command.require_input then
+					print_to_command_line(command.name, nil)
+					return
+				end
+
 				local ok, res = pcall(execute)
 				if not ok then
 					error(res, 0)
